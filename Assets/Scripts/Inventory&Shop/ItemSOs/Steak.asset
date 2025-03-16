@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Steak
   itemDescription: tao la thit
-  icon: {fileID: 21300000, guid: d4d595d8cff4c6340add58c6b2096178, type: 3}
+  icon: {fileID: 5558420398955925738, guid: d4d595d8cff4c6340add58c6b2096178, type: 3}
   isGold: 0
-  currentHealth: 0
+  stackSize: 3
+  currentHealth: 5
   maxHealth: 0
   speed: 0
   damage: 0

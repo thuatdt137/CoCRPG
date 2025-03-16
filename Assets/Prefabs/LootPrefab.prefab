@@ -108,6 +108,7 @@ MonoBehaviour:
   itemSO: {fileID: 11400000, guid: 662c151d40ebf8d449194bec35aa8b09, type: 2}
   sr: {fileID: 5050726638316339942}
   anim: {fileID: 8954341459796051408}
+  canBePickedup: 1
   quantity: 0
 --- !u!1 &3915670810694327812
 GameObject:
