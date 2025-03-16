@@ -16,8 +16,9 @@ MonoBehaviour:
   itemDescription: tao la bi ngo
   icon: {fileID: 8389134475083476877, guid: f433c8e24542c8240ba6a9b48ad7b9e1, type: 3}
   isGold: 0
+  stackSize: 3
   currentHealth: 0
   maxHealth: 0
   speed: 0
   damage: 0
-  duration: 0
+  duration: 5

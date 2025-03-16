@@ -4,6 +4,7 @@ using UnityEngine;
 public class StatsManager : MonoBehaviour
 {
     public static StatsManager Instance;
+    public StatsUI statsUI;
     public TMP_Text healthText;
     [Header("Combat Stats")]
     public int damage;
@@ -36,5 +37,18 @@ public class StatsManager : MonoBehaviour
     {
         maxHealth += amount;
         healthText.text = "HP: " + currentHealth + "/ " + maxHealth;
+    }
+    public void UpdateHealth(int amount)
+    {
+        currentHealth += amount;
+        if(currentHealth>= maxHealth)
+            currentHealth = maxHealth;
+
+        healthText.text = "HP: " + currentHealth + "/ " + maxHealth;
+    }
+    public void UpdateSpeed(int amount)
+    {
+        speed += amount;
+        statsUI.UpdateAllStats();
     }
 }
