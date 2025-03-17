@@ -22,7 +22,7 @@ public class Elevation_Exit : MonoBehaviour
                 boundary.enabled = false;
             }
 
-            collision.gameObject.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            collision.gameObject.GetComponent<SpriteRenderer>().sortingOrder -= 7;
         }
     }
 }
