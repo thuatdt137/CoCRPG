@@ -13,6 +13,9 @@ public class ShopKeeper : MonoBehaviour
     [SerializeField] private List<ShopItems> shopItems;
     [SerializeField] private List<ShopItems> shopWeapons;
     [SerializeField] private List<ShopItems> shopArmour;
+
+    [SerializeField] private Camera shopKeeperCam;
+    [SerializeField] private Vector3 cameraOffset = new Vector3(0,0,-1);
     public static event Action<ShopManager, bool> OnShopStateChanged;
 
 
@@ -26,25 +29,28 @@ public class ShopKeeper : MonoBehaviour
             {
                 if (!isShopOpen)
                 {
-                    Time.timeScale = 0;
+                    /*Time.timeScale = 0;*/
                     currentShopKeeper = this;
                     isShopOpen = true;
                     OnShopStateChanged?.Invoke(shopManager, true);
                     shopCanvasGroup.alpha = 1;
                     shopCanvasGroup.blocksRaycasts = true;
                     shopCanvasGroup.interactable = true;
+                    shopKeeperCam.transform.position = transform.position + cameraOffset;
+                    shopKeeperCam.gameObject.SetActive(true);
                     OpenItemShop();
                 }
-                else
-                {
-                    Time.timeScale = 1;
-                    currentShopKeeper = null;
-                    isShopOpen = false;
-                    OnShopStateChanged?.Invoke(shopManager, false);
-                    shopCanvasGroup.alpha = 0;
-                    shopCanvasGroup.blocksRaycasts = false;
-                    shopCanvasGroup.interactable = false;
-                }
+            }
+            else if (Input.GetButtonDown("Cancel"))
+            {
+                /*Time.timeScale = 1;*/
+                currentShopKeeper = null;
+                isShopOpen = false;
+                OnShopStateChanged?.Invoke(shopManager, false);
+                shopCanvasGroup.alpha = 0;
+                shopCanvasGroup.blocksRaycasts = false;
+                shopCanvasGroup.interactable = false;
+                shopKeeperCam.gameObject.SetActive(false);
             }
         }
     }
