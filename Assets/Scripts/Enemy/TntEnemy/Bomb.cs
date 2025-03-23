@@ -44,21 +44,18 @@ public class Bomb : MonoBehaviour
 
     private void Explode()
     {
-        // Tạo hiệu ứng phát nổ
         Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
-        // Kiểm tra Player trong vùng nổ
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius, playerLayer);
         foreach (Collider2D hit in hits)
         {
             if (hit.CompareTag("Player"))
             {
                 hit.GetComponent<PlayerHealth>().ChangeHealth(-damage);
-                //hit.GetComponent<PlayerMovement>().Knockback(transform, knockbackForce, knockbackTime, stunTime);
             }
         }
 
-        Destroy(gameObject); // Hủy bomb sau khi nổ
+        Destroy(gameObject);
     }
 
     private void AttachToSurface(Transform surface)
@@ -67,7 +64,7 @@ public class Bomb : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Kinematic;
         transform.SetParent(surface);
 
-        Invoke("Explode", 1.5f); // Nổ sau 1.5s nếu không chạm Player
+        Invoke("Explode", 1.5f);
     }
 
     void OnDrawGizmosSelected()

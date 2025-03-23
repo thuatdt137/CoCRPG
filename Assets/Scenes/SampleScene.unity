@@ -8771,6 +8771,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 13313498}
+  - component: {fileID: 13313499}
   m_Layer: 0
   m_Name: DetectionPoint
   m_TagString: Untagged
@@ -8793,6 +8794,42 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1777869139}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &13313499
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13313497}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 5
 --- !u!1 &213184860
 GameObject:
   m_ObjectHideFlags: 0
@@ -10958,7 +10995,6 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!114 &722935758
 MonoBehaviour:
@@ -11181,6 +11217,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 725872148}
+  - component: {fileID: 725872149}
   m_Layer: 0
   m_Name: DetectionPoint
   m_TagString: Untagged
@@ -11197,12 +11234,48 @@ Transform:
   m_GameObject: {fileID: 725872147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.89, y: 0, z: 0}
+  m_LocalPosition: {x: 1.99, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1433258512}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &725872149
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725872147}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2
 --- !u!1 &743566540
 GameObject:
   m_ObjectHideFlags: 0
@@ -11402,7 +11475,6 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!114 &767282468
 MonoBehaviour:
@@ -12100,7 +12172,6 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!114 &820320392
 MonoBehaviour:
@@ -14619,7 +14690,6 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!114 &1268709590
 MonoBehaviour:
@@ -15127,6 +15197,7 @@ GameObject:
   - component: {fileID: 1433258506}
   - component: {fileID: 1433258505}
   - component: {fileID: 1433258504}
+  - component: {fileID: 1433258513}
   m_Layer: 7
   m_Name: TNTEnemy
   m_TagString: Untagged
@@ -15195,8 +15266,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 3.6058555, y: 0}
-  m_Radius: 6.894572
+  m_Offset: {x: 2.4333835, y: 0}
+  m_Radius: 5.950875
 --- !u!70 &1433258507
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -15249,7 +15320,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -15260,7 +15331,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &1433258509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15274,14 +15345,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  attackRange: 2
+  attackRange: 4
   attackCooldown: 2
-  playerDetectRange: 5
+  playerDetectRange: 6
   detectionPoint: {fileID: 725872148}
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!95 &1433258510
 Animator:
@@ -15369,7 +15439,7 @@ Transform:
   m_GameObject: {fileID: 1433258503}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.018197, y: -7.340061, z: 0}
+  m_LocalPosition: {x: 7.53, y: 4.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15377,6 +15447,30 @@ Transform:
   - {fileID: 725872148}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1433258513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433258503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2b36ea18544e449aeb74d5eb75cd98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  attackPoint: {fileID: 725872148}
+  weaponRange: 3
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  launchPoint: {fileID: 1508232535}
+  bombPrefab: {fileID: 1355835030504720516, guid: da72ed77ebd2e2b49b4b1ac8606b5e1d, type: 3}
+  enemyMovement: {fileID: 1433258509}
+  shootCooldown: 2
+  anim: {fileID: 1433258510}
+  player: {fileID: 898877414}
 --- !u!1 &1447580465
 GameObject:
   m_ObjectHideFlags: 0
@@ -15803,7 +15897,6 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!114 &1475833010
 MonoBehaviour:
@@ -16327,7 +16420,7 @@ Transform:
   m_GameObject: {fileID: 1508232534}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.59, y: 0, z: 0}
+  m_LocalPosition: {x: 0.74, y: -0.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18665,7 +18758,6 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  isThrowing: 0
   player: {fileID: 898877414}
 --- !u!114 &1777869133
 MonoBehaviour:
@@ -18871,7 +18963,7 @@ Transform:
   m_GameObject: {fileID: 1777869131}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.03, y: -1.89, z: 0}
+  m_LocalPosition: {x: 6.34, y: -4.63, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19062,6 +19154,22 @@ PrefabInstance:
       propertyPath: m_BoundingShape2D
       value: 
       objectReference: {fileID: 1122550008}
+    - target: {fileID: 694022574923524048, guid: 47b86de9d295f3a45b6419ed35bc054b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 10.544746
+      objectReference: {fileID: 0}
+    - target: {fileID: 694022574923524048, guid: 47b86de9d295f3a45b6419ed35bc054b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.4446447
+      objectReference: {fileID: 0}
+    - target: {fileID: 4264380803616335763, guid: 47b86de9d295f3a45b6419ed35bc054b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.382308
+      objectReference: {fileID: 0}
+    - target: {fileID: 4264380803616335763, guid: 47b86de9d295f3a45b6419ed35bc054b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.409695
+      objectReference: {fileID: 0}
     - target: {fileID: 5453678965826701029, guid: 47b86de9d295f3a45b6419ed35bc054b, type: 3}
       propertyPath: m_Name
       value: Cameras
@@ -20657,11 +20765,11 @@ PrefabInstance:
       objectReference: {fileID: 2038505971}
     - target: {fileID: 2574598250756915904, guid: 5b9382d29f8f12c44aee6fe8084b81e3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18.05
+      value: 13.5
       objectReference: {fileID: 0}
     - target: {fileID: 2574598250756915904, guid: 5b9382d29f8f12c44aee6fe8084b81e3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 4.3
       objectReference: {fileID: 0}
     - target: {fileID: 2574598250756915904, guid: 5b9382d29f8f12c44aee6fe8084b81e3, type: 3}
       propertyPath: m_LocalPosition.z
