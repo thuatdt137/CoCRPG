@@ -1,7 +1,9 @@
+﻿using System.Collections;
 using UnityEngine;
 
 public class PlayerSaveHandler : MonoBehaviour
 {
+    private SaveHouse saveHouse;
     // References to the player's components
     private PlayerMovement playerMovement;
     private ExpManager expManager;
@@ -12,6 +14,8 @@ public class PlayerSaveHandler : MonoBehaviour
     // Reference to the SaveSystem
     private SaveSystem saveSystem;
     private InventoryManager inventoryManager;
+
+    public bool canSaveLoad = false;
 
     void Awake()
     {
@@ -24,21 +28,43 @@ public class PlayerSaveHandler : MonoBehaviour
         inventoryManager = FindObjectOfType<InventoryManager>();
         // Find the SaveSystem in the scene
         saveSystem = FindObjectOfType<SaveSystem>();
+        saveHouse = FindAnyObjectByType<SaveHouse>();
     }
-
+    private void Start()
+    {
+        LoadPlayerData();
+    }
     void Update()
     {
-        // Press S to save the game
-        if (Input.GetKeyDown(KeyCode.I))
+        if (canSaveLoad)
         {
-            SavePlayerData();
-        }
+            // Press I to save the game
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                SavePlayerData();
+                StartCoroutine(PlaySaveAnimation());
+            }
 
-        // Press L to load the game
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            LoadPlayerData();
+            // Press O to load the game
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                LoadPlayerData();   
+            }
         }
+    }
+    private IEnumerator PlaySaveAnimation()
+    {
+        // Kích hoạt animation bằng cách đặt isPlayerInRange thành true
+        saveHouse.anim.SetBool("isPlayerInRange", true);
+
+        // Lấy thông tin về animation state hiện tại
+        float animationLength = 1f;
+
+        // Chờ cho animation chạy hết
+        yield return new WaitForSeconds(animationLength);
+
+        // Đặt lại isPlayerInRange thành false
+        saveHouse.anim.SetBool("isPlayerInRange", false);
     }
 
     public void SavePlayerData()
@@ -155,6 +181,38 @@ public class PlayerSaveHandler : MonoBehaviour
         }
         else
         {
+            // Set default values if no save data exists
+            transform.position = Vector3.zero;
+            StatsManager.Instance.currentHealth = 100;
+            StatsManager.Instance.maxHealth = 100;
+            StatsManager.Instance.UpdateHealth(0);
+            expManager.currentExp = 0;
+            expManager.level = 1;
+            expManager.expToLevel = 10;
+            expManager.UpdateUI();
+            StatsManager.Instance.damage = 10;
+            StatsManager.Instance.weaponRange = 1f;
+            StatsManager.Instance.knockbackForce = 5f;
+            StatsManager.Instance.knockbackTime = 0.2f;
+            StatsManager.Instance.stunTime = 0.5f;
+            StatsManager.Instance.speed = 5;
+            StatsManager.Instance.statsUI.UpdateAllStats();
+            playerCombat.enabled = true;
+            playerBow.enabled = false;
+            changeEquipment.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+
+            // Default inventory values (clear inventory)
+            foreach (var slot in inventoryManager.itemSlots)
+            {
+                slot.itemSO = null;
+                slot.quantity = 0;
+                slot.UpdateUI();
+            }
+
+            // Default gold value
+            inventoryManager.gold = 0;
+            inventoryManager.goldText.text = inventoryManager.gold.ToString();
+
             Debug.Log("No save data found. Starting with default values.");
         }
     }
