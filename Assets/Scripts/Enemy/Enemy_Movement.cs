@@ -11,6 +11,7 @@ public class Enemy_Movement : MonoBehaviour
     public Transform detectionPoint;
     public LayerMask playerLayer;
 
+    public bool isThrowing;
 
     private float attackCooldownTimer;
     private int facingDirection = 1;

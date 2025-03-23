@@ -52,7 +52,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -131,10 +131,10 @@ TextureImporter:
       name: Dynamite_0
       rect:
         serializedVersion: 2
-        x: 19
-        y: 10
-        width: 29
-        height: 53
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,10 +153,10 @@ TextureImporter:
       name: Dynamite_1
       rect:
         serializedVersion: 2
-        x: 83
-        y: 10
-        width: 29
-        height: 54
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -175,10 +175,10 @@ TextureImporter:
       name: Dynamite_2
       rect:
         serializedVersion: 2
-        x: 147
-        y: 10
-        width: 28
-        height: 53
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -197,10 +197,10 @@ TextureImporter:
       name: Dynamite_3
       rect:
         serializedVersion: 2
-        x: 211
-        y: 10
-        width: 27
-        height: 52
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -219,10 +219,10 @@ TextureImporter:
       name: Dynamite_4
       rect:
         serializedVersion: 2
-        x: 275
-        y: 10
-        width: 29
-        height: 53
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -241,10 +241,10 @@ TextureImporter:
       name: Dynamite_5
       rect:
         serializedVersion: 2
-        x: 339
-        y: 10
-        width: 30
-        height: 53
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -263,7 +263,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 0953e1fd243933a4c94303ce873f726c
     internalID: 0
     vertices: []
     indices: 
