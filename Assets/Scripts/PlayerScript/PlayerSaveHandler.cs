@@ -30,10 +30,10 @@ public class PlayerSaveHandler : MonoBehaviour
         saveSystem = FindObjectOfType<SaveSystem>();
         saveHouse = FindAnyObjectByType<SaveHouse>();
     }
-    private void Start()
+/*    private void Start()
     {
         LoadPlayerData();
-    }
+    }*/
     void Update()
     {
         if (canSaveLoad)

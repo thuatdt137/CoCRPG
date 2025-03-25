@@ -1,42 +1,70 @@
+﻿using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class MapGenerator : MonoBehaviour
 {
     [System.Serializable]
-    public struct TerrainLayer
+    public struct GroundTileSet
     {
-        public Tilemap tilemap; // The Tilemap for this terrain type
-        public TileBase[] tiles; // Array of tiles to use for this terrain type (e.g., multiple grass tiles)
-        [Range(0f, 1f)] public float density; // Probability of this terrain type appearing
+        public TileBase centerTile; // Tile cho mảnh giữa
+        public TileBase topLeftCorner; // Góc trái trên
+        public TileBase topRightCorner; // Góc phải trên
+        public TileBase bottomLeftCorner; // Góc trái dưới
+        public TileBase bottomRightCorner; // Góc phải dưới
+        public TileBase topEdge; // Cạnh trên
+        public TileBase bottomEdge; // Cạnh dưới
+        public TileBase leftEdge; // Cạnh trái
+        public TileBase rightEdge; // Cạnh phải
+    }
+
+    [System.Serializable]
+    public struct TreeTileSet
+    {
+        public TileBase bottomLeft; // Thân dưới trái
+        public TileBase bottomCenter; // Thân dưới giữa
+        public TileBase bottomRight; // Thân dưới phải
+        public TileBase topLeft; // Thân trên trái
+        public TileBase topCenter; // Thân trên giữa
+        public TileBase topRight; // Thân trên phải
+        public TileBase top; // Ngọn cây
     }
 
     [Header("Tilemap Settings")]
-    public TerrainLayer[] groundLayers; // Array of ground Tilemaps (e.g., grass, water, sand)
-    public TerrainLayer obstacleLayer; // Layer for obstacles (trees, mountains)
+    public Tilemap groundTilemap; // Tilemap cho ground (grass)
+    public GroundTileSet groundTiles; // Các loại tile cho ground
+    public Tilemap treeBottomTilemap; // Tilemap cho phần thân dưới của cây
+    public Tilemap treeTopTilemap; // Tilemap cho phần thân trên của cây
+    public TreeTileSet[] treeTileSets;
 
     [Header("Map Dimensions")]
-    public int mapWidth = 50; // Width of the map in tiles
-    public int mapHeight = 50; // Height of the map in tiles
+    public int mapWidth = 50;
+    public int mapHeight = 50;
 
     [Header("Terrain Settings")]
-    [Range(0f, 1f)] public float obstacleDensity = 0.1f; // Percentage of tiles that will have obstacles (trees, mountains)
+    public bool useRandomSeed = true; // Sử dụng seed ngẫu nhiên
+    public int fixedSeed = 0; // Seed cố định nếu useRandomSeed = false
 
-    [Header("Edge Settings")]
-    public int edgeBuffer = 5; // Number of tiles from the edge to force a specific terrain (e.g., water)
+    private float seedOffsetX; // Offset ngẫu nhiên cho noise
+    private float seedOffsetY;
 
-    [Header("Enemy Settings")]
-    public GameObject[] enemyPrefabs; // Array of enemy prefabs to spawn
-    public int minEnemies = 5; // Minimum number of enemies to spawn
-    public int maxEnemies = 10; // Maximum number of enemies to spawn
+    [Header("Tree Settings")]
+    [Range(0.01f, 0.5f)] public float treeNoiseScale = 0.1f; // Nhiễu thô
+    [Range(0f, 1f)] public float treeThreshold = 0.3f; // Giảm để tăng số lượng cây
+    [Range(0.01f, 0.5f)] public float treeNoiseScaleFine = 0.2f; // Nhiễu mịn
+    [Range(0f, 1f)] public float treeNoiseWeightFine = 0.2f; // Trọng số nhiễu mịn
+
+    [Header("Monster Settings")]
+    public GameObject[] monsterPrefabs; // Prefab quái vật
+    [Range(0.01f, 0.5f)] public float monsterNoiseScale = 0.1f;
+    [Range(0f, 1f)] public float monsterThreshold = 0.5f; // Giảm để tăng số lượng quái
 
     [Header("Item Settings")]
-    public GameObject[] itemPrefabs; // Array of item prefabs to spawn (e.g., Torch_Yellow)
-    public int minItems = 5; // Minimum number of items to spawn
-    public int maxItems = 10; // Maximum number of items to spawn
+    public GameObject[] itemPrefabs; // Prefab vật phẩm
+    [Range(0.01f, 0.5f)] public float itemNoiseScale = 0.1f;
+    [Range(0f, 1f)] public float itemThreshold = 0.5f; // Giảm để tăng số lượng vật phẩm
+    private bool[,] occupied; // Mảng theo dõi vị trí đã đặt cây, quái, vật phẩm
 
-    [Header("Player Settings")]
-    public Transform player; // Reference to the player to avoid spawning objects on top of them
 
     void Start()
     {
@@ -45,140 +73,151 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        // Clear all existing Tilemaps
-        foreach (var layer in groundLayers)
-        {
-            layer.tilemap.ClearAllTiles();
-        }
-        obstacleLayer.tilemap.ClearAllTiles();
+        // Clear existing Tilemaps
+        groundTilemap.ClearAllTiles();
+        treeBottomTilemap.ClearAllTiles();
+        treeTopTilemap.ClearAllTiles();
 
-        // Step 1: Generate the ground with multiple terrain types
+        // Khởi tạo mảng occupied
+        occupied = new bool[mapWidth, mapHeight];
+
+        // Generate random seed offset
+        if (useRandomSeed)
+        {
+            seedOffsetX = Random.Range(-10000f, 10000f);
+            seedOffsetY = Random.Range(-10000f, 10000f);
+        }
+        else
+        {
+            seedOffsetX = fixedSeed;
+            seedOffsetY = fixedSeed;
+        }
+
+        // Step 1: Generate noise maps for trees, monsters, and items
+        float[,] treeNoiseMap = new float[mapWidth, mapHeight];
+        float[,] treeNoiseMapFine = new float[mapWidth, mapHeight];
+        float[,] monsterNoiseMap = new float[mapWidth, mapHeight];
+        float[,] itemNoiseMap = new float[mapWidth, mapHeight];
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                // Check if this position is near the edge
-                bool isEdge = x < edgeBuffer || x >= mapWidth - edgeBuffer || y < edgeBuffer || y >= mapHeight - edgeBuffer;
+                // Noise for trees (lớp thô)
+                treeNoiseMap[x, y] = Mathf.PerlinNoise(x * treeNoiseScale + seedOffsetX + 2000f, y * treeNoiseScale + seedOffsetY + 2000f);
+                // Noise for trees (lớp mịn)
+                treeNoiseMapFine[x, y] = Mathf.PerlinNoise(x * treeNoiseScaleFine + seedOffsetX + 3000f, y * treeNoiseScaleFine + seedOffsetY + 3000f);
+                // Noise for monsters
+                monsterNoiseMap[x, y] = Mathf.PerlinNoise(x * monsterNoiseScale + seedOffsetX + 4000f, y * monsterNoiseScale + seedOffsetY + 4000f);
+                // Noise for items
+                itemNoiseMap[x, y] = Mathf.PerlinNoise(x * itemNoiseScale + seedOffsetX + 5000f, y * itemNoiseScale + seedOffsetY + 5000f);
+            }
+        }
 
-                // Use Perlin noise for natural terrain distribution
-                float noise = Mathf.PerlinNoise(x * 0.1f, y * 0.1f);
+        // Step 2: Place ground tiles (only grass)
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                TileBase selectedTile = groundTiles.centerTile;
+                if (x == 0 && y == mapHeight - 1) selectedTile = groundTiles.topLeftCorner;
+                else if (x == mapWidth - 1 && y == mapHeight - 1) selectedTile = groundTiles.topRightCorner;
+                else if (x == 0 && y == 0) selectedTile = groundTiles.bottomLeftCorner;
+                else if (x == mapWidth - 1 && y == 0) selectedTile = groundTiles.bottomRightCorner;
+                else if (y == mapHeight - 1) selectedTile = groundTiles.topEdge;
+                else if (y == 0) selectedTile = groundTiles.bottomEdge;
+                else if (x == 0) selectedTile = groundTiles.leftEdge;
+                else if (x == mapWidth - 1) selectedTile = groundTiles.rightEdge;
 
-                // Default to the first layer (e.g., grass) if no other conditions are met
-                TerrainLayer selectedLayer = groundLayers[0];
+                groundTilemap.SetTile(new Vector3Int(x, y, 0), selectedTile);
+            }
+        }
 
-                // If near the edge, force a specific terrain (e.g., water)
-                if (isEdge && groundLayers.Length > 1)
+        // Step 3: Place trees
+        for (int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                float treeNoise = treeNoiseMap[x, y] * (1f - treeNoiseWeightFine) + treeNoiseMapFine[x, y] * treeNoiseWeightFine;
+                if (treeNoise < treeThreshold)
                 {
-                    selectedLayer = groundLayers[1]; // Use the second layer (e.g., water) for edges
-                }
-                else
-                {
-                    // Use noise to decide terrain type
-                    float totalDensity = 0f;
-                    foreach (var layer in groundLayers)
-                    {
-                        totalDensity += layer.density;
-                    }
+                    if (x + 2 >= mapWidth || y + 2 >= mapHeight) continue;
 
-                    float randomValue = Random.value * totalDensity;
-                    float cumulativeDensity = 0f;
-
-                    for (int i = 0; i < groundLayers.Length; i++)
+                    bool isOccupied = false;
+                    for (int i = 0; i < 3; i++)
                     {
-                        cumulativeDensity += groundLayers[i].density;
-                        if (randomValue <= cumulativeDensity)
+                        for (int j = 0; j < 3; j++)
                         {
-                            selectedLayer = groundLayers[i];
-                            break;
+                            if (occupied[x + i, y + j])
+                            {
+                                isOccupied = true;
+                                break;
+                            }
+                        }
+                        if (isOccupied) break;
+                    }
+                    if (isOccupied) continue;
+
+                    if (treeTileSets.Length > 0)
+                    {
+                        TreeTileSet tree = treeTileSets[Random.Range(0, treeTileSets.Length)];
+                        treeBottomTilemap.SetTile(new Vector3Int(x, y, 0), tree.bottomLeft);
+                        treeBottomTilemap.SetTile(new Vector3Int(x + 1, y, 0), tree.bottomCenter);
+                        treeBottomTilemap.SetTile(new Vector3Int(x + 2, y, 0), tree.bottomRight);
+                        treeTopTilemap.SetTile(new Vector3Int(x, y + 1, 0), tree.topLeft);
+                        treeTopTilemap.SetTile(new Vector3Int(x + 1, y + 1, 0), tree.topCenter);
+                        treeTopTilemap.SetTile(new Vector3Int(x + 2, y + 1, 0), tree.topRight);
+                        treeTopTilemap.SetTile(new Vector3Int(x + 1, y + 2, 0), tree.top);
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                            for (int j = 0; j < 3; j++)
+                            {
+                                occupied[x + i, y + j] = true;
+                            }
                         }
                     }
                 }
+            }
+        }
 
-                // Randomly select a tile from the selected layer's tiles array
-                if (selectedLayer.tiles.Length > 0)
+        // Step 3: Place monsters (within map bounds)
+        for (int x = 1; x < mapWidth - 1; x++)
+        {
+            for (int y = 1; y < mapHeight - 1; y++)
+            {
+                if (monsterNoiseMap[x, y] > monsterThreshold && !occupied[x, y])
                 {
-                    TileBase selectedTile = selectedLayer.tiles[Random.Range(0, selectedLayer.tiles.Length)];
-                    selectedLayer.tilemap.SetTile(new Vector3Int(x, y, 0), selectedTile);
-                }
-            }
-        }
-
-        // Step 2: Place obstacles (trees, mountains, etc.)
-        for (int x = 0; x < mapWidth; x++)
-        {
-            for (int y = 0; y < mapHeight; y++)
-            {
-                // Skip the player's starting position
-                Vector3 worldPos = groundLayers[0].tilemap.CellToWorld(new Vector3Int(x, y, 0));
-                if (Vector2.Distance(worldPos, player.position) < 2f) continue;
-
-                // Randomly place obstacles
-                if (Random.value < obstacleDensity && obstacleLayer.tiles.Length > 0)
-                {
-                    TileBase selectedObstacle = obstacleLayer.tiles[Random.Range(0, obstacleLayer.tiles.Length)];
-                    obstacleLayer.tilemap.SetTile(new Vector3Int(x, y, 0), selectedObstacle);
-                }
-            }
-        }
-
-        // Step 3: Spawn enemies
-        int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
-        for (int i = 0; i < enemyCount; i++)
-        {
-            Vector2 spawnPos = GetRandomSpawnPosition();
-            if (spawnPos != Vector2.zero) // Ensure a valid position was found
-            {
-                GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-                Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            }
-        }
-
-        // Step 4: Spawn items
-        int itemCount = Random.Range(minItems, maxItems + 1);
-        for (int i = 0; i < itemCount; i++)
-        {
-            Vector2 spawnPos = GetRandomSpawnPosition();
-            if (spawnPos != Vector2.zero) // Ensure a valid position was found
-            {
-                GameObject itemPrefab = itemPrefabs[Random.Range(0, itemPrefabs.Length)];
-                Instantiate(itemPrefab, spawnPos, Quaternion.identity);
-            }
-        }
-    }
-
-    private Vector2 GetRandomSpawnPosition()
-    {
-        int maxAttempts = 10;
-        for (int i = 0; i < maxAttempts; i++)
-        {
-            // Generate a random position within the map bounds
-            int x = Random.Range(0, mapWidth);
-            int y = Random.Range(0, mapHeight);
-            Vector3Int tilePos = new Vector3Int(x, y, 0);
-            Vector3 worldPos = groundLayers[0].tilemap.CellToWorld(tilePos);
-
-            // Check if the position is free (no obstacles and not too close to the player)
-            if (obstacleLayer.tilemap.GetTile(tilePos) == null && Vector2.Distance(worldPos, player.position) > 2f)
-            {
-                // Ensure the position is not on water (or other non-walkable terrain)
-                bool isWalkable = true;
-                foreach (var layer in groundLayers)
-                {
-                    if (layer.tilemap.GetTile(tilePos) != null && layer.tilemap.gameObject.CompareTag("NonWalkable"))
+                    if (monsterPrefabs.Length > 0)
                     {
-                        isWalkable = false;
-                        break;
+                        GameObject monsterPrefab = monsterPrefabs[Random.Range(0, monsterPrefabs.Length)];
+                        Vector3 worldPos = groundTilemap.CellToWorld(new Vector3Int(x, y, 0)) + new Vector3(0.5f, 0.5f, 0);
+                        GameObject spawnedMonster = Instantiate(monsterPrefab, worldPos, Quaternion.identity);
+                        occupied[x, y] = true;
                     }
                 }
-
-                if (isWalkable)
-                {
-                    return worldPos;
-                }
             }
         }
 
-        Debug.LogWarning("Could not find a valid spawn position after " + maxAttempts + " attempts.");
-        return Vector2.zero; // Return an invalid position if no valid spot is found
+        // Step 4: Place items (within map bounds)
+        for (int x = 1; x < mapWidth - 1; x++)
+        {
+            for (int y = 1; y < mapHeight - 1; y++)
+            {
+                if (itemNoiseMap[x, y] > itemThreshold && !occupied[x, y])
+                {
+                    if (itemPrefabs.Length > 0)
+                    {
+                        GameObject itemPrefab = itemPrefabs[Random.Range(0, itemPrefabs.Length)];
+                        Vector3 worldPos = groundTilemap.CellToWorld(new Vector3Int(x, y, 0)) + new Vector3(0.5f, 0.5f, 0);
+                        GameObject spawnedItem = Instantiate(itemPrefab, worldPos, Quaternion.identity);
+                        occupied[x, y] = true;
+
+                        // Kiểm tra nếu vị trí vượt ra ngoài bản đồ
+                        Vector3 tilemapMin = groundTilemap.CellToWorld(new Vector3Int(0, 0, 0));
+                        Vector3 tilemapMax = groundTilemap.CellToWorld(new Vector3Int(mapWidth - 1, mapHeight - 1, 0));
+                    }
+                }
+            }
+        }
     }
 }

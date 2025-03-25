@@ -10,6 +10,23 @@ public class SceneChanger : MonoBehaviour
     public Vector2 newPlayerPosition;
     private Transform player;
 
+    void Start()
+    {
+        // Tìm FadeCanvas trong scene
+        GameObject fadeCanvas = GameObject.Find("FadeCanvas");
+        if (fadeCanvas != null)
+        {
+            fadeAnim = fadeCanvas.GetComponentInChildren<Animator>();
+            if (fadeAnim == null)
+            {
+                Debug.LogWarning("Animator not found on FadeCanvas for teleporter at position: " + transform.position);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("FadeCanvas not found for teleporter at position: " + transform.position);
+        }
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
