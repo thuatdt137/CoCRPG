@@ -12,6 +12,9 @@ public class ExpManager : MonoBehaviour
     public Slider expSlider;
     public TMP_Text currentLevelText;
 
+    public TMP_Text scoreText;
+    public int currentScore;
+
     public static event Action<int> OnLevelUp;
 
 
@@ -41,6 +44,7 @@ public class ExpManager : MonoBehaviour
     public void GainExperience(int amount)
     {
         currentExp += amount;
+        currentScore += 10;
         if (currentExp >= expToLevel)
         {
             LevelUp();
@@ -63,5 +67,6 @@ public class ExpManager : MonoBehaviour
         expSlider.maxValue = expToLevel;
         expSlider.value = currentExp;
         currentLevelText.text = "Level: " + level;
+        scoreText.text = "Score: " + currentScore;
     }
 }
